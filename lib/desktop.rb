@@ -23,10 +23,10 @@ require 'logger'
 
 module Desktop
   require 'desktop/version'
+  require 'desktop/utility'
   require 'desktop/db'
   require 'desktop/model'
   require 'desktop/env'
-  # This is your gem's load point. Require your components here.
 
   class << self
     ##

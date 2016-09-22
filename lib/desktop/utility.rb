@@ -18,22 +18,40 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-require 'sequel'
+
+require 'terminal-table'
+require 'time_ago_in_words'
 
 module Desktop
   ##
-  # A Workspace is a collection of a name, a path, a description, path, and
-  # some useful timestamps.
-  class Workspace < Sequel::Model 
-  end
+  # A collection of utility functions.
+  module Utility
+    ##
+    # Renders a list of workspaces into a printable object.
+    def self.draw_workspaces(workspace_list)
+      headings = ['Name', 'Description', 'Path', 'Last Used']
+      rows = []
+      workspace_list.each do |w|
+        last_used_at = w.last_used_at.ago_in_words
+        rows << [w.name, w.description, w.path, last_used_at]
+      end
 
-  ##
-  # A tag is a textual tag that can be applied to multiple workspaces.
-  class Tag < Sequel::Model
-  end
+      return Terminal::Table.new :headings => headings, :rows => rows
+    end
 
-  ##
-  # Many-to-many association table between tags and workspaces.
-  class WorkspaceTag < Sequel::Model
+    ##
+    # Renders a list of tags into a printable object.
+    def self.draw_tags(tag_list)
+      headings = ['Tag', 'Usage Count']
+      rows = []
+      tag_list.each do |t| 
+        count = WorkspaceTag.where(:tag_id => t.id).count
+        rows << [t.name, count]
+      end
+
+      table = Terminal::Table.new :headings => headings, :rows => rows
+      table.align_column 1, :right
+      return table
+    end
   end
 end

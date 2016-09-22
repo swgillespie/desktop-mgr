@@ -18,6 +18,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+require 'os'
+
 module Desktop
   ##
   # An environment is a collectino of user-provided environmental 
@@ -57,8 +60,9 @@ module Desktop
   # and command aliases that will be applied upon entry to the
   # environment.
   class Configuration
-    attr_accessor :environment_variables
-    attr_accessor :aliases
+    attr_reader :environment_variables
+    attr_reader :aliases
+    attr_reader :commands
 
     ##
     # Initializes the configuration to have no env vars and
@@ -66,6 +70,7 @@ module Desktop
     def initialize
       @environment_variables = {}
       @aliases = {}
+      @commands = []
     end
 
     ##
@@ -78,6 +83,32 @@ module Desktop
     # Defines a new command alias.
     def alias_cmd(key, value)
       @aliases[key] = value
+    end
+
+    ##
+    # Schedules a string to be echoed.
+    def echo(string)
+      @commands << "echo #{string}"
+    end
+
+    ##
+    # Schedules a command to be run.
+    def cmd(string)
+      @commands << string
+    end
+
+    ##
+    # Evals a block only if the current operating
+    # system matches the named operating system.
+    # names can be one of :linux, :macos, or :windows
+    def os(*names, &block)
+      if OS.linux? and names.include? :linux
+        instance_eval &block
+      elsif OS.mac? and names.include? :macos
+        instance_eval &block
+      elsif OS.windows? and names.include? :windows
+        instance_eval &block
+      end
     end
   end
 end

@@ -1,0 +1,33 @@
+# This is a Desktopfile I use when developing on CoreCLR
+# (https://github.com/dotnet/coreclr).
+#
+# It serves as an example of some of the things that can be
+# customized in a Desktopfile.
+
+# The default config is nothing special. This is the config
+# that desktop-mgr loads if no other config is specified.
+configuration :default do
+end
+
+# For our debug configuration, we've got a bunch of logging,
+# ulimit set to unlimited, and heap verify on.
+configuration :debug do
+  env 'COMPlus_StressLog', '1'
+  env 'COMPlus_LogLevel', '15'
+  env 'COMPlus_LogFacility', '84001'
+  env 'COMPlus_StressLogSize', '5000000'
+  env 'COMPlus_TotalStressLogSize', '500000000'
+  env 'COMPlus_HeapVerify', '1'
+
+  os :linux, :macos do
+    # enable crash dumps
+    cmd 'ulimit -c unlimited'
+  end
+
+  os :linux do
+    # Linux doesn't write shared libaries into crash dumps by default
+    # so any dumps of libcoreclr.so are useless. This fixes that.
+    cmd 'echo 0x3F > /proc/self/coredump_filter' 
+  end
+end
+

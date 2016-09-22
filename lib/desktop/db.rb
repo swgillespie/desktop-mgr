@@ -33,6 +33,10 @@ module Desktop
     # Creates the Sequel DB instance corresponding to the first version
     # of the Desktop schema.
     def self.create_db
+      unless Dir.exist? DESKTOP_DIR
+        Dir.mkdir DESKTOP_DIR
+      end
+      
       db = Sequel.sqlite DB_FILE
       db.create_table? :workspaces do
         primary_key :id

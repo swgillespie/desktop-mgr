@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
     s.add_runtime_dependency 'terminal-table', '~> 1.7', '>= 1.7.1'
     s.add_runtime_dependency 'time_ago_in_words', '~> 0.1.1'
     s.add_runtime_dependency 'os', '~> 0.9.6'
+    s.add_runtime_dependency 'sqlite3', '~> 1.3', '>= 1.3.11'
 end
